@@ -1,0 +1,15 @@
+FROM registry.ci.openshift.org/open-cluster-management/builder:go1.16-linux AS builder
+
+WORKDIR /go/src/github.com/open-cluster-management/node_exporter
+COPY . .
+RUN make build
+
+FROM registry.access.redhat.com/ubi8/ubi-minimal:latest 
+
+COPY --from=builder /go/src/github.com/open-cluster-management/node_exporter/node_exporter /bin/node_exporter
+ 
+RUN microdnf update -y && microdnf install -y virt-what && microdnf clean all && rm -rf /var/cache/*
+
+EXPOSE      9100
+USER        nobody
+ENTRYPOINT  [ "/bin/node_exporter" ]
