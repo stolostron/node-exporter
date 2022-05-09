@@ -19,7 +19,7 @@ require (
 	github.com/prometheus/procfs v0.6.0
 	github.com/siebenmann/go-kstat v0.0.0-20200303194639-4e8294f9e9d5
 	github.com/soundcloud/go-runit v0.0.0-20150630195641-06ad41a06c4a
-	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c
+	golang.org/x/sys v0.0.0-20220111092808-5a964db01320
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
 
@@ -38,12 +38,15 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
-	golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9 // indirect
-	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
+	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce // indirect
+	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
-	golang.org/x/text v0.3.3 // indirect
+	golang.org/x/text v0.3.6 // indirect
 	google.golang.org/protobuf v1.23.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
+
+// fix CVE-2022-24450
+replace github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.7.2
 
 go 1.17
