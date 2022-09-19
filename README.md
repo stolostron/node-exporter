@@ -287,4 +287,4 @@ See the [exporter-toolkit https package](https://github.com/prometheus/exporter-
 [quay]: https://quay.io/repository/prometheus/node-exporter
 [goreportcard]: https://goreportcard.com/report/github.com/prometheus/node_exporter
 
-Rebuild: Wed Sep  7 11:16:29 EDT 2022
+Rebuild date: Mon Sep 19 13:28:49 EDT 2022
