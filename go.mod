@@ -12,9 +12,9 @@ require (
 	github.com/mattn/go-xmlrpc v0.0.3
 	github.com/mdlayher/genetlink v1.0.0 // indirect
 	github.com/mdlayher/wifi v0.0.0-20200527114002-84f0b9457fdd
-	github.com/prometheus/client_golang v1.9.0
+	github.com/prometheus/client_golang v1.11.1
 	github.com/prometheus/client_model v0.2.0
-	github.com/prometheus/common v0.15.0
+	github.com/prometheus/common v0.26.0
 	github.com/prometheus/exporter-toolkit v0.5.1
 	github.com/prometheus/procfs v0.6.0
 	github.com/siebenmann/go-kstat v0.0.0-20200303194639-4e8294f9e9d5
@@ -28,6 +28,7 @@ require (
 	github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
+	github.com/go-kit/log v0.1.0 // indirect
 	github.com/go-logfmt/logfmt v0.5.0 // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/josharian/native v0.0.0-20200817173448-b6b71def0850 // indirect
@@ -38,15 +39,20 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
-	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce // indirect
+	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
+	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421 // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
 	golang.org/x/text v0.3.6 // indirect
-	google.golang.org/protobuf v1.23.0 // indirect
+	google.golang.org/appengine v1.4.0 // indirect
+	google.golang.org/protobuf v1.26.0-rc.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 // fix CVE-2022-24450
-replace github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.7.2
+replace (
+	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.8.2
+	golang.org/x/text => golang.org/x/text v0.3.7
+)
 
 go 1.17
