@@ -286,3 +286,5 @@ See the [exporter-toolkit https package](https://github.com/prometheus/exporter-
 [circleci]: https://circleci.com/gh/prometheus/node_exporter
 [quay]: https://quay.io/repository/prometheus/node-exporter
 [goreportcard]: https://goreportcard.com/report/github.com/prometheus/node_exporter
+
+Rebuild date: Wed Sep 28 13:30:43 EDT 2022
