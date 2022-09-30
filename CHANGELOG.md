@@ -5,6 +5,116 @@
 * [ENHANCEMENT]
 * [BUGFIX]
 
+## 1.4.0 / 2022-09-24
+
+* [CHANGE] Merge metrics descriptions in textfile collector #2475
+* [FEATURE] [node-mixin] Add darwin dashboard to mixin #2351
+* [FEATURE] Add "isolated" metric on cpu collector on linux #2251
+* [FEATURE] Add cgroup summary collector #2408
+* [FEATURE] Add selinux collector #2205
+* [FEATURE] Add slab info collector #2376
+* [FEATURE] Add sysctl collector #2425
+* [FEATURE] Also track the CPU Spin time for OpenBSD systems #1971
+* [FEATURE] Add support for MacOS version #2471
+* [ENHANCEMENT] [node-mixin] Add missing selectors #2426
+* [ENHANCEMENT] [node-mixin] Change current datasource to grafana's default #2281
+* [ENHANCEMENT] [node-mixin] Change disk graph to disk table #2364
+* [ENHANCEMENT] [node-mixin] Change io time units to %util #2375
+* [ENHANCEMENT] Ad user_wired_bytes and laundry_bytes on *bsd #2266
+* [ENHANCEMENT] Add additional vm_stat memory metrics for darwin #2240
+* [ENHANCEMENT] Add device filter flags to arp collector #2254
+* [ENHANCEMENT] Add diskstats include and exclude device flags #2417
+* [ENHANCEMENT] Add node_softirqs_total metric #2221
+* [ENHANCEMENT] Add rapl zone name label option #2401
+* [ENHANCEMENT] Add slabinfo collector #1799
+* [ENHANCEMENT] Allow user to select port on NTP server to query #2270
+* [ENHANCEMENT] collector/diskstats: Add labels and metrics from udev #2404
+* [ENHANCEMENT] Enable builds against older macOS SDK #2327
+* [ENHANCEMENT] qdisk-linux: Add exclude and include flags for interface name #2432
+* [ENHANCEMENT] systemd: Expose systemd minor version #2282
+* [ENHANCEMENT] Use netlink for tcpstat collector #2322
+* [ENHANCEMENT] Use netlink to get netdev stats #2074
+* [ENHANCEMENT] Add additional perf counters for stalled frontend/backend cycles #2191
+* [ENHANCEMENT] Add btrfs device error stats #2193
+* [BUGFIX] [node-mixin] Fix fsSpaceAvailableCriticalThreshold and fsSpaceAvailableWarning #2352
+* [BUGFIX] Fix concurrency issue in ethtool collector #2289
+* [BUGFIX] Fix concurrency issue in netdev collector #2267
+* [BUGFIX] Fix diskstat reads and write metrics for disks with different sector sizes #2311
+* [BUGFIX] Fix iostat on macos broken by deprecation warning #2292
+* [BUGFIX] Fix NodeFileDescriptorLimit alerts #2340
+* [BUGFIX] Sanitize rapl zone names #2299
+* [BUGFIX] Add file descriptor close safely in test #2447
+* [BUGFIX] Fix race condition in os_release.go #2454
+* [BUGFIX] Skip ZFS IO metrics if their paths are missing #2451
+
+## 1.3.1 / 2021-12-01
+
+* [BUGFIX] Handle nil CPU thermal power status on M1 #2218
+* [BUGFIX] bsd: Ignore filesystems flagged as MNT_IGNORE. #2227
+* [BUGFIX] Sanitize UTF-8 in dmi collector #2229
+
+## 1.3.0 / 2021-10-20
+
+NOTE: In order to support globs in the textfile collector path, filenames exposed by
+      `node_textfile_mtime_seconds` now contain the full path name.
+
+* [CHANGE] Add path label to rapl collector #2146
+* [CHANGE] Exclude filesystems under /run/credentials #2157
+* [CHANGE] Add TCPTimeouts to netstat default filter #2189
+* [FEATURE] Add lnstat collector for metrics from /proc/net/stat/ #1771
+* [FEATURE] Add darwin powersupply collector #1777
+* [FEATURE] Add support for monitoring GPUs on Linux #1998
+* [FEATURE] Add Darwin thermal collector #2032
+* [FEATURE] Add os release collector #2094
+* [FEATURE] Add netdev.address-info collector #2105
+* [FEATURE] Add clocksource metrics to time collector #2197
+* [ENHANCEMENT] Support glob textfile collector directories #1985
+* [ENHANCEMENT] ethtool: Expose node_ethtool_info metric #2080
+* [ENHANCEMENT] Use include/exclude flags for ethtool filtering #2165
+* [ENHANCEMENT] Add flag to disable guest CPU metrics #2123
+* [ENHANCEMENT] Add DMI collector #2131
+* [ENHANCEMENT] Add threads metrics to processes collector #2164
+* [ENHANCMMENT] Reduce timer GC delays in the Linux filesystem collector #2169
+* [ENHANCMMENT] Add TCPTimeouts to netstat default filter #2189
+* [ENHANCMMENT] Use SysctlTimeval for boottime collector on BSD #2208
+* [BUGFIX] ethtool: Sanitize metric names #2093
+* [BUGFIX] Fix ethtool collector for multiple interfaces #2126
+* [BUGFIX] Fix possible panic on macOS #2133
+* [BUGFIX] Collect flag_info and bug_info only for one core #2156
+* [BUGFIX] Prevent duplicate ethtool metric names #2187
+
+## 1.2.2 / 2021-08-06
+
+* [BUGFIX] Fix processes collector long int parsing #2112
+
+## 1.2.1 / 2021-07-23
+
+* [BUGFIX] Fix zoneinfo parsing prometheus/procfs#386
+* [BUGFIX] Fix nvme collector log noise #2091
+* [BUGFIX] Fix rapl collector log noise #2092
+
+## 1.2.0 / 2021-07-15
+
+NOTE: Ignoring invalid network speed will be the default in 2.x
+NOTE: Filesystem collector flags have been renamed. `--collector.filesystem.ignored-mount-points` is now `--collector.filesystem.mount-points-exclude` and `--collector.filesystem.ignored-fs-types` is now `--collector.filesystem.fs-types-exclude`. The old flags will be removed in 2.x.
+
+* [CHANGE] Rename filesystem collector flags to match other collectors #2012
+* [CHANGE] Make node_exporter print usage to STDOUT #2039
+* [FEATURE] Add conntrack statistics metrics #1155
+* [FEATURE] Add ethtool stats collector #1832
+* [FEATURE] Add flag to ignore network speed if it is unknown #1989
+* [FEATURE] Add tapestats collector for Linux #2044
+* [FEATURE] Add nvme collector #2062
+* [ENHANCEMENT] Add ErrorLog plumbing to promhttp #1887
+* [ENHANCEMENT] Add more Infiniband counters #2019
+* [ENHANCEMENT] netclass: retrieve interface names and filter before parsing #2033
+* [ENHANCEMENT] Add time zone offset metric #2060
+* [BUGFIX] Handle errors from disabled PSI subsystem #1983
+* [BUGFIX] Fix panic when using backwards compatible flags #2000
+* [BUGFIX] Fix wrong value for OpenBSD memory buffer cache #2015
+* [BUGFIX] Only initiate collectors once #2048
+* [BUGFIX] Handle small backwards jumps in CPU idle #2067
+  
 ## 1.1.2 / 2021-03-05
 
 * [BUGFIX] Handle errors from disabled PSI subsystem #1983
@@ -251,7 +361,7 @@ Other breaking changes:
 * [CHANGE] Greatly reduce the metrics vmstat returns by default. #874
 * [CHANGE] Greatly trim what netstat collector exposes by default #876
 * [CHANGE] Drop `exec_` prefix and move `node_boot_time_seconds` from `exec` to new `boottime` collector and enable for Darwin/Dragonfly/FreeBSD/NetBSD/OpenBSD. #839, #901
-* [CHANGE] Remove depreated gmond collector #852
+* [CHANGE] Remove deprecated gmond collector #852
 * [CHANGE] align Darwin disk stat names with Linux #930
 * [FEATURE] Add `collect[]` parameter #699
 * [FEATURE] Add text collector conversion for ipmitool output. #746
@@ -319,7 +429,7 @@ Windows support is now removed, the [wmi_exporter](https://github.com/martinlind
 * [FEATURE] Add bcache collector for Linux #597
 * [FEATURE] Add parsing /proc/net/snmp6 file for Linux #615
 * [FEATURE] Add timex collector for Linux #664
-* [ENHANCEMENT] Include overal health status in smartmon.sh example script #546
+* [ENHANCEMENT] Include overall health status in smartmon.sh example script #546
 * [ENHANCEMENT] Include `guest_nice` in CPU collector #554
 * [ENHANCEMENT] Add exec_boot_time for freebsd, dragonfly #550
 * [ENHANCEMENT] Get full resolution for node_time #555

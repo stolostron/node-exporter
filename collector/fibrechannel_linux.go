@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// +build linux
-// +build !nofibrechannel
+//go:build linux && !nofibrechannel
+// +build linux,!nofibrechannel
 
 package collector
 
@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/procfs/sysfs"
 )
@@ -70,7 +70,7 @@ func NewFibreChannelCollector(logger log.Logger) (Collector, error) {
 		"speed":                          "Current operating speed",
 		"port_state":                     "Current port state",
 		"port_type":                      "Port type, what the port is connected to",
-		"symbolic_name":                  "Symoblic Name",
+		"symbolic_name":                  "Symbolic Name",
 		"node_name":                      "Node Name as hexadecimal string",
 		"port_id":                        "Port ID as string",
 		"port_name":                      "Port Name as hexadecimal string",

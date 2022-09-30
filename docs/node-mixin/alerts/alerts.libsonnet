@@ -48,17 +48,17 @@
             alert: 'NodeFilesystemAlmostOutOfSpace',
             expr: |||
               (
-                node_filesystem_avail_bytes{%(nodeExporterSelector)s,%(fsSelector)s} / node_filesystem_size_bytes{%(nodeExporterSelector)s,%(fsSelector)s} * 100 < %(fsSpaceAvailableCriticalThreshold)d
+                node_filesystem_avail_bytes{%(nodeExporterSelector)s,%(fsSelector)s} / node_filesystem_size_bytes{%(nodeExporterSelector)s,%(fsSelector)s} * 100 < %(fsSpaceAvailableWarningThreshold)d
               and
                 node_filesystem_readonly{%(nodeExporterSelector)s,%(fsSelector)s} == 0
               )
             ||| % $._config,
-            'for': '1h',
+            'for': '30m',
             labels: {
               severity: 'warning',
             },
             annotations: {
-              summary: 'Filesystem has less than %(fsSpaceAvailableCriticalThreshold)d%% space left.' % $._config,
+              summary: 'Filesystem has less than %(fsSpaceAvailableWarningThreshold)d%% space left.' % $._config,
               description: 'Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left.',
             },
           },
@@ -66,17 +66,17 @@
             alert: 'NodeFilesystemAlmostOutOfSpace',
             expr: |||
               (
-                node_filesystem_avail_bytes{%(nodeExporterSelector)s,%(fsSelector)s} / node_filesystem_size_bytes{%(nodeExporterSelector)s,%(fsSelector)s} * 100 < %(fsSpaceAvailableWarningThreshold)d
+                node_filesystem_avail_bytes{%(nodeExporterSelector)s,%(fsSelector)s} / node_filesystem_size_bytes{%(nodeExporterSelector)s,%(fsSelector)s} * 100 < %(fsSpaceAvailableCriticalThreshold)d
               and
                 node_filesystem_readonly{%(nodeExporterSelector)s,%(fsSelector)s} == 0
               )
             ||| % $._config,
-            'for': '1h',
+            'for': '30m',
             labels: {
               severity: '%(nodeCriticalSeverity)s' % $._config,
             },
             annotations: {
-              summary: 'Filesystem has less than %(fsSpaceAvailableWarningThreshold)d%% space left.' % $._config,
+              summary: 'Filesystem has less than %(fsSpaceAvailableCriticalThreshold)d%% space left.' % $._config,
               description: 'Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left.',
             },
           },
@@ -214,15 +214,15 @@
             alert: 'NodeClockSkewDetected',
             expr: |||
               (
-                node_timex_offset_seconds > 0.05
+                node_timex_offset_seconds{%(nodeExporterSelector)s} > 0.05
               and
-                deriv(node_timex_offset_seconds[5m]) >= 0
+                deriv(node_timex_offset_seconds{%(nodeExporterSelector)s}[5m]) >= 0
               )
               or
               (
-                node_timex_offset_seconds < -0.05
+                node_timex_offset_seconds{%(nodeExporterSelector)s} < -0.05
               and
-                deriv(node_timex_offset_seconds[5m]) <= 0
+                deriv(node_timex_offset_seconds{%(nodeExporterSelector)s}[5m]) <= 0
               )
             ||| % $._config,
             'for': '10m',
@@ -237,9 +237,9 @@
           {
             alert: 'NodeClockNotSynchronising',
             expr: |||
-              min_over_time(node_timex_sync_status[5m]) == 0
+              min_over_time(node_timex_sync_status{%(nodeExporterSelector)s}[5m]) == 0
               and
-              node_timex_maxerror_seconds >= 16
+              node_timex_maxerror_seconds{%(nodeExporterSelector)s} >= 16
             ||| % $._config,
             'for': '10m',
             labels: {
@@ -253,7 +253,7 @@
           {
             alert: 'NodeRAIDDegraded',
             expr: |||
-              node_md_disks_required - ignoring (state) (node_md_disks{state="active"}) > 0
+              node_md_disks_required{%(nodeExporterSelector)s,%(diskDeviceSelector)s} - ignoring (state) (node_md_disks{state="active",%(nodeExporterSelector)s,%(diskDeviceSelector)s}) > 0
             ||| % $._config,
             'for': '15m',
             labels: {
@@ -267,7 +267,7 @@
           {
             alert: 'NodeRAIDDiskFailure',
             expr: |||
-              node_md_disks{state="failed"} > 0
+              node_md_disks{state="failed",%(nodeExporterSelector)s,%(diskDeviceSelector)s} > 0
             ||| % $._config,
             labels: {
               severity: 'warning',
@@ -275,6 +275,38 @@
             annotations: {
               summary: 'Failed device in RAID array',
               description: "At least one device in RAID array on {{ $labels.instance }} failed. Array '{{ $labels.device }}' needs attention and possibly a disk swap.",
+            },
+          },
+          {
+            alert: 'NodeFileDescriptorLimit',
+            expr: |||
+              (
+                node_filefd_allocated{%(nodeExporterSelector)s} * 100 / node_filefd_maximum{%(nodeExporterSelector)s} > 70
+              )
+            ||| % $._config,
+            'for': '15m',
+            labels: {
+              severity: 'warning',
+            },
+            annotations: {
+              summary: 'Kernel is predicted to exhaust file descriptors limit soon.',
+              description: 'File descriptors limit at {{ $labels.instance }} is currently at {{ printf "%.2f" $value }}%.',
+            },
+          },
+          {
+            alert: 'NodeFileDescriptorLimit',
+            expr: |||
+              (
+                node_filefd_allocated{%(nodeExporterSelector)s} * 100 / node_filefd_maximum{%(nodeExporterSelector)s} > 90
+              )
+            ||| % $._config,
+            'for': '15m',
+            labels: {
+              severity: 'critical',
+            },
+            annotations: {
+              summary: 'Kernel is predicted to exhaust file descriptors limit soon.',
+              description: 'File descriptors limit at {{ $labels.instance }} is currently at {{ printf "%.2f" $value }}%.',
             },
           },
         ],

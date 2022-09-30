@@ -11,21 +11,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !nohwmon
 // +build !nohwmon
 
 package collector
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/sys/unix"
 )
@@ -77,7 +77,7 @@ func addValueFile(data map[string]map[string]string, sensor string, prop string,
 	data[sensor][prop] = value
 }
 
-// sysReadFile is a simplified ioutil.ReadFile that invokes syscall.Read directly.
+// sysReadFile is a simplified os.ReadFile that invokes syscall.Read directly.
 func sysReadFile(file string) ([]byte, error) {
 	f, err := os.Open(file)
 	if err != nil {
@@ -86,7 +86,7 @@ func sysReadFile(file string) ([]byte, error) {
 	defer f.Close()
 
 	// On some machines, hwmon drivers are broken and return EAGAIN.  This causes
-	// Go's ioutil.ReadFile implementation to poll forever.
+	// Go's os.ReadFile implementation to poll forever.
 	//
 	// Since we either want to read data or bail immediately, do the simplest
 	// possible read using system call directly.
@@ -127,7 +127,7 @@ func explodeSensorFilename(filename string) (ok bool, sensorType string, sensorN
 }
 
 func collectSensorData(dir string, data map[string]map[string]string) error {
-	sensorFiles, dirError := ioutil.ReadDir(dir)
+	sensorFiles, dirError := os.ReadDir(dir)
 	if dirError != nil {
 		return dirError
 	}
@@ -348,7 +348,7 @@ func (c *hwMonCollector) hwmonName(dir string) (string, error) {
 	// However the path of the device has to be stable:
 	// - /sys/devices/<bus>/<device>
 	// Some hardware monitors have a "name" file that exports a human
-	// readbale name that can be used.
+	// readable name that can be used.
 
 	// human readable names would be bat0 or coretemp, while a path string
 	// could be platform_applesmc.768
@@ -373,7 +373,7 @@ func (c *hwMonCollector) hwmonName(dir string) (string, error) {
 	}
 
 	// preference 2: is there a name file
-	sysnameRaw, nameErr := ioutil.ReadFile(filepath.Join(dir, "name"))
+	sysnameRaw, nameErr := os.ReadFile(filepath.Join(dir, "name"))
 	if nameErr == nil && string(sysnameRaw) != "" {
 		cleanName := cleanMetricName(string(sysnameRaw))
 		if cleanName != "" {
@@ -401,7 +401,7 @@ func (c *hwMonCollector) hwmonName(dir string) (string, error) {
 // hwmonHumanReadableChipName is similar to the methods in hwmonName, but with
 // different precedences -- we can allow duplicates here.
 func (c *hwMonCollector) hwmonHumanReadableChipName(dir string) (string, error) {
-	sysnameRaw, nameErr := ioutil.ReadFile(filepath.Join(dir, "name"))
+	sysnameRaw, nameErr := os.ReadFile(filepath.Join(dir, "name"))
 	if nameErr != nil {
 		return "", nameErr
 	}
@@ -422,7 +422,7 @@ func (c *hwMonCollector) Update(ch chan<- prometheus.Metric) error {
 
 	hwmonPathName := filepath.Join(sysFilePath("class"), "hwmon")
 
-	hwmonFiles, err := ioutil.ReadDir(hwmonPathName)
+	hwmonFiles, err := os.ReadDir(hwmonPathName)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			level.Debug(c.logger).Log("msg", "hwmon collector metrics are not available for this system")
@@ -434,15 +434,16 @@ func (c *hwMonCollector) Update(ch chan<- prometheus.Metric) error {
 
 	for _, hwDir := range hwmonFiles {
 		hwmonXPathName := filepath.Join(hwmonPathName, hwDir.Name())
+		fileInfo, _ := os.Lstat(hwmonXPathName)
 
-		if hwDir.Mode()&os.ModeSymlink > 0 {
-			hwDir, err = os.Stat(hwmonXPathName)
+		if fileInfo.Mode()&os.ModeSymlink > 0 {
+			fileInfo, err = os.Stat(hwmonXPathName)
 			if err != nil {
 				continue
 			}
 		}
 
-		if !hwDir.IsDir() {
+		if !fileInfo.IsDir() {
 			continue
 		}
 
