@@ -11,7 +11,7 @@ in Go with pluggable metric collectors.
 
 The [Windows exporter](https://github.com/prometheus-community/windows_exporter) is recommended for Windows users.
 To expose NVIDIA GPU metrics, [prometheus-dcgm
-](https://github.com/NVIDIA/gpu-monitoring-tools#dcgm-exporter)
+](https://github.com/NVIDIA/dcgm-exporter)
 can be used.
 
 ## Installation and Usage
@@ -81,6 +81,7 @@ below list all existing collectors and the supported systems.
 
 Collectors are enabled by providing a `--collector.<name>` flag.
 Collectors that are enabled by default can be disabled by providing a `--no-collector.<name>` flag.
+To enable only some specific collector(s), use `--collector.disable-defaults --collector.<name> ...`.
 
 ### Enabled by default
 
@@ -95,6 +96,7 @@ conntrack | Shows conntrack statistics (does nothing if no `/proc/sys/net/netfil
 cpu | Exposes CPU statistics | Darwin, Dragonfly, FreeBSD, Linux, Solaris, OpenBSD
 cpufreq | Exposes CPU frequency statistics | Linux, Solaris
 diskstats | Exposes disk I/O statistics. | Darwin, Linux, OpenBSD
+dmi | Expose Desktop Management Interface (DMI) info from `/sys/class/dmi/id/` | Linux
 edac | Exposes error detection and correction statistics. | Linux
 entropy | Exposes available entropy. | Linux
 exec | Exposes execution statistics. | Dragonfly, FreeBSD
@@ -112,14 +114,19 @@ netdev | Exposes network interface statistics such as bytes transferred. | Darwi
 netstat | Exposes network statistics from `/proc/net/netstat`. This is the same information as `netstat -s`. | Linux
 nfs | Exposes NFS client statistics from `/proc/net/rpc/nfs`. This is the same information as `nfsstat -c`. | Linux
 nfsd | Exposes NFS kernel server statistics from `/proc/net/rpc/nfsd`. This is the same information as `nfsstat -s`. | Linux
+nvme | Exposes NVMe info from `/sys/class/nvme/` | Linux
+os | Expose OS release info from `/etc/os-release` or `/usr/lib/os-release` | _any_
 powersupplyclass | Exposes Power Supply statistics from `/sys/class/power_supply` | Linux
 pressure | Exposes pressure stall statistics from `/proc/pressure/`. | Linux (kernel 4.20+ and/or [CONFIG\_PSI](https://www.kernel.org/doc/html/latest/accounting/psi.html))
 rapl | Exposes various statistics from `/sys/class/powercap`. | Linux
 schedstat | Exposes task scheduler statistics from `/proc/schedstat`. | Linux
+selinux | Exposes SELinux statistics. | Linux
 sockstat | Exposes various statistics from `/proc/net/sockstat`. | Linux
 softnet | Exposes statistics from `/proc/net/softnet_stat`. | Linux
 stat | Exposes various statistics from `/proc/stat`. This includes boot time, forks and interrupts. | Linux
+tapestats | Exposes statistics from `/sys/class/scsi_tape`. | Linux
 textfile | Exposes statistics read from local disk. The `--collector.textfile.directory` flag must be set. | _any_
+thermal | Exposes thermal statistics like `pmset -g therm`. | Darwin
 thermal\_zone | Exposes thermal zone & cooling device statistics from `/sys/class/thermal`. | Linux
 time | Exposes the current system time. | _any_
 timex | Exposes selected adjtimex(2) system call stats. | Linux
@@ -127,14 +134,14 @@ udp_queues | Exposes UDP total lengths of the rx_queue and tx_queue from `/proc/
 uname | Exposes system information as provided by the uname system call. | Darwin, FreeBSD, Linux, OpenBSD
 vmstat | Exposes statistics from `/proc/vmstat`. | Linux
 xfs | Exposes XFS runtime statistics. | Linux (kernel 4.4+)
-zfs | Exposes [ZFS](http://open-zfs.org/) performance statistics. | [Linux](http://zfsonlinux.org/), Solaris
+zfs | Exposes [ZFS](http://open-zfs.org/) performance statistics. | FreeBSD, [Linux](http://zfsonlinux.org/), Solaris
 
 ### Disabled by default
 
 `node_exporter` also implements a number of collectors that are disabled by default.  Reasons for this vary by
 collector, and may include:
 * High cardinality
-* Prolonged runtime that exceeds Prometheus` `scrape_interval` or `scrape_timeout`
+* Prolonged runtime that exceeds the Prometheus `scrape_interval` or `scrape_timeout`
 * Significant resource demands on the host
 
 You can enable additional collectors as desired by adding them to your
@@ -147,6 +154,35 @@ scrape_duration_seconds` metric to ensure that collection completes
 and does not time out.  In addition, monitor the
 `scrape_samples_post_metric_relabeling` metric to see the changes in
 cardinality.
+
+Name     | Description | OS
+---------|-------------|----
+buddyinfo | Exposes statistics of memory fragments as reported by /proc/buddyinfo. | Linux
+cgroups | A summary of the number of active and enabled cgroups | Linux
+devstat | Exposes device statistics | Dragonfly, FreeBSD
+drbd | Exposes Distributed Replicated Block Device statistics (to version 8.4) | Linux
+ethtool | Exposes network interface information and network driver statistics equivalent to `ethtool`, `ethtool -S`, and `ethtool -i`. | Linux
+interrupts | Exposes detailed interrupts statistics. | Linux, OpenBSD
+ksmd | Exposes kernel and system statistics from `/sys/kernel/mm/ksm`. | Linux
+lnstat | Exposes stats from `/proc/net/stat/`. | Linux
+logind | Exposes session counts from [logind](http://www.freedesktop.org/wiki/Software/systemd/logind/). | Linux
+meminfo\_numa | Exposes memory statistics from `/proc/meminfo_numa`. | Linux
+mountstats | Exposes filesystem statistics from `/proc/self/mountstats`. Exposes detailed NFS client statistics. | Linux
+network_route | Exposes the routing table as metrics | Linux
+ntp | Exposes local NTP daemon health to check [time](./docs/TIME.md) | _any_
+perf | Exposes perf based metrics (Warning: Metrics are dependent on kernel configuration and settings). | Linux
+processes | Exposes aggregate process statistics from `/proc`. | Linux
+qdisc | Exposes [queuing discipline](https://en.wikipedia.org/wiki/Network_scheduler#Linux_kernel) statistics | Linux
+runit | Exposes service status from [runit](http://smarden.org/runit/). | _any_
+slabinfo | Exposes slab statistics from `/proc/slabinfo`. Note that permission of `/proc/slabinfo` is usually 0400, so set it appropriately. | Linux
+supervisord | Exposes service status from [supervisord](http://supervisord.org/). | _any_
+sysctl | Expose sysctl values from `/proc/sys`. Use `--collector.sysctl.include(-info)` to configure. | Linux
+systemd | Exposes service and system status from [systemd](http://www.freedesktop.org/wiki/Software/systemd/). | Linux
+tcpstat | Exposes TCP connection status information from `/proc/net/tcp` and `/proc/net/tcp6`. (Warning: the current version has potential performance issues in high load situations.) | Linux
+wifi | Exposes WiFi device and station statistics. | Linux
+zoneinfo | Exposes NUMA memory zone metrics. | Linux
+
+### Perf Collector
 
 The `perf` collector may not work out of the box on some Linux systems due to kernel
 configuration and security settings. To allow access, set the following `sysctl`
@@ -183,29 +219,56 @@ found using [`perf list`](http://man7.org/linux/man-pages/man1/perf.1.html) or
 from debugfs. And example usage of this would be
 `--collector.perf.tracepoint="sched:sched_process_exec"`.
 
+### Sysctl Collector
 
-Name     | Description | OS
----------|-------------|----
-buddyinfo | Exposes statistics of memory fragments as reported by /proc/buddyinfo. | Linux
-devstat | Exposes device statistics | Dragonfly, FreeBSD
-drbd | Exposes Distributed Replicated Block Device statistics (to version 8.4) | Linux
-interrupts | Exposes detailed interrupts statistics. | Linux, OpenBSD
-ksmd | Exposes kernel and system statistics from `/sys/kernel/mm/ksm`. | Linux
-logind | Exposes session counts from [logind](http://www.freedesktop.org/wiki/Software/systemd/logind/). | Linux
-meminfo\_numa | Exposes memory statistics from `/proc/meminfo_numa`. | Linux
-mountstats | Exposes filesystem statistics from `/proc/self/mountstats`. Exposes detailed NFS client statistics. | Linux
-network_route | Exposes the routing table as metrics | Linux
-ntp | Exposes local NTP daemon health to check [time](./docs/TIME.md) | _any_
-perf | Exposes perf based metrics (Warning: Metrics are dependent on kernel configuration and settings). | Linux
-processes | Exposes aggregate process statistics from `/proc`. | Linux
-qdisc | Exposes [queuing discipline](https://en.wikipedia.org/wiki/Network_scheduler#Linux_kernel) statistics | Linux
-runit | Exposes service status from [runit](http://smarden.org/runit/). | _any_
-supervisord | Exposes service status from [supervisord](http://supervisord.org/). | _any_
-systemd | Exposes service and system status from [systemd](http://www.freedesktop.org/wiki/Software/systemd/). | Linux
-tcpstat | Exposes TCP connection status information from `/proc/net/tcp` and `/proc/net/tcp6`. (Warning: the current version has potential performance issues in high load situations.) | Linux
-wifi | Exposes WiFi device and station statistics. | Linux
-zoneinfo | Exposes NUMA memory zone metrics. | Linux
+The `sysctl` collector can be enabled with `--collector.sysctl`. It supports exposing numeric sysctl values
+as metrics using the `--collector.sysctl.include` flag and string values as info metrics by using the
+`--collector.sysctl.include-info` flag. The flags can be repeated. For sysctl with multiple numeric values,
+an optional mapping can be given to expose each value as its own metric. Otherwise an `index` label is used
+to identify the different fields.
 
+#### Examples
+##### Numeric values
+###### Single values
+Using `--collector.sysctl.include=vm.user_reserve_kbytes`:
+`vm.user_reserve_kbytes = 131072` -> `node_sysctl_vm_user_reserve_kbytes 131072`
+
+###### Multiple values
+A sysctl can contain multiple values, for example:
+```
+net.ipv4.tcp_rmem = 4096	131072	6291456
+```
+Using `--collector.sysctl.include=net.ipv4.tcp_rmem` the collector will expose:
+```
+node_sysctl_net_ipv4_tcp_rmem{index="0"} 4096
+node_sysctl_net_ipv4_tcp_rmem{index="1"} 131072
+node_sysctl_net_ipv4_tcp_rmem{index="2"} 6291456
+```
+If the indexes have defined meaning like in this case, the values can be mapped to multiple metrics by appending the mapping to the --collector.sysctl.include flag:
+Using `--collector.sysctl.include=net.ipv4.tcp_rmem:min,default,max` the collector will expose:
+```
+node_sysctl_net_ipv4_tcp_rmem_min 4096
+node_sysctl_net_ipv4_tcp_rmem_default 131072
+node_sysctl_net_ipv4_tcp_rmem_max 6291456
+```
+
+##### String values
+String values need to be exposed as info metric. The user selects them by using the `--collector.sysctl.include-info` flag.
+
+###### Single values
+`kernel.core_pattern = core` -> `node_sysctl_info{key="kernel.core_pattern_info", value="core"} 1`
+
+###### Multiple values
+Given the following sysctl:
+```
+kernel.seccomp.actions_avail = kill_process kill_thread trap errno trace log allow
+```
+Setting `--collector.sysctl.include-info=kernel.seccomp.actions_avail` will yield:
+```
+node_sysctl_info{key="kernel.seccomp.actions_avail", index="0", value="kill_process"} 1
+node_sysctl_info{key="kernel.seccomp.actions_avail", index="1", value="kill_thread"} 1
+...
+```
 
 ### Textfile Collector
 
@@ -258,7 +321,7 @@ Building:
 
     git clone https://github.com/prometheus/node_exporter.git
     cd node_exporter
-    make
+    make build
     ./node_exporter <flags>
 
 To see all available configuration flags:
@@ -287,4 +350,4 @@ See the [exporter-toolkit https package](https://github.com/prometheus/exporter-
 [quay]: https://quay.io/repository/prometheus/node-exporter
 [goreportcard]: https://goreportcard.com/report/github.com/prometheus/node_exporter
 
-Rebuild date: Mon Sep 19 13:28:49 EDT 2022
+Rebuild date: Thu Sep 29 23:53:22 EDT 2022

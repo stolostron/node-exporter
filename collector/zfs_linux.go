@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !nozfs
 // +build !nozfs
 
 package collector
@@ -24,7 +25,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -73,10 +74,6 @@ func (c *zfsCollector) updatePoolStats(ch chan<- prometheus.Metric) error {
 		return err
 	}
 
-	if zpoolPaths == nil {
-		return nil
-	}
-
 	for _, zpoolPath := range zpoolPaths {
 		file, err := os.Open(zpoolPath)
 		if err != nil {
@@ -102,7 +99,7 @@ func (c *zfsCollector) updatePoolStats(ch chan<- prometheus.Metric) error {
 	for _, zpoolPath := range zpoolObjsetPaths {
 		file, err := os.Open(zpoolPath)
 		if err != nil {
-			// this file should exist, but there is a race where an exporting pool can remove the files -- ok to ignore
+			// This file should exist, but there is a race where an exporting pool can remove the files. Ok to ignore.
 			level.Debug(c.logger).Log("msg", "Cannot open file for reading", "path", zpoolPath)
 			return errZFSNotAvailable
 		}
@@ -122,13 +119,14 @@ func (c *zfsCollector) updatePoolStats(ch chan<- prometheus.Metric) error {
 	}
 
 	if zpoolStatePaths == nil {
-		level.Debug(c.logger).Log("msg", "Not found pool state files")
+		level.Debug(c.logger).Log("msg", "No pool state files found")
+		return nil
 	}
 
 	for _, zpoolPath := range zpoolStatePaths {
 		file, err := os.Open(zpoolPath)
 		if err != nil {
-			// this file should exist, but there is a race where an exporting pool can remove the files -- ok to ignore
+			// This file should exist, but there is a race where an exporting pool can remove the files. Ok to ignore.
 			level.Debug(c.logger).Log("msg", "Cannot open file for reading", "path", zpoolPath)
 			return errZFSNotAvailable
 		}

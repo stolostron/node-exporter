@@ -21,7 +21,7 @@ DOCKER_ARCHS ?= amd64 armv7 arm64 ppc64le s390x
 
 include Makefile.common
 
-PROMTOOL_VERSION ?= 2.18.1
+PROMTOOL_VERSION ?= 2.30.0
 PROMTOOL_URL     ?= https://github.com/prometheus/prometheus/releases/download/v$(PROMTOOL_VERSION)/prometheus-$(PROMTOOL_VERSION).$(GO_BUILD_PLATFORM).tar.gz
 PROMTOOL         ?= $(FIRST_GOPATH)/bin/promtool
 
@@ -62,12 +62,13 @@ endif
 
 PROMU := $(FIRST_GOPATH)/bin/promu --config $(PROMU_CONF)
 
+e2e-out-64k-page = collector/fixtures/e2e-64k-page-output.txt
 e2e-out = collector/fixtures/e2e-output.txt
 ifeq ($(MACH), ppc64le)
-	e2e-out = collector/fixtures/e2e-64k-page-output.txt
+	e2e-out = $(e2e-out-64k-page)
 endif
 ifeq ($(MACH), aarch64)
-	e2e-out = collector/fixtures/e2e-64k-page-output.txt
+	e2e-out = $(e2e-out-64k-page)
 endif
 
 # 64bit -> 32bit mapping for cross-checking. At least for amd64/386, the 64bit CPU can execute 32bit code but not the other way around, so we don't support cross-testing upwards.
@@ -104,7 +105,7 @@ skip-test-32bit:
 
 %/.unpacked: %.ttar
 	@echo ">> extracting fixtures"
-	if [ -d $(dir $@) ] ; then rm -r $(dir $@) ; fi
+	if [ -d $(dir $@) ] ; then rm -rf $(dir $@) ; fi
 	./ttar -C $(dir $*) -x -f $*.ttar
 	touch $@
 
@@ -125,6 +126,7 @@ skip-test-e2e:
 checkmetrics: $(PROMTOOL)
 	@echo ">> checking metrics for correctness"
 	./checkmetrics.sh $(PROMTOOL) $(e2e-out)
+	./checkmetrics.sh $(PROMTOOL) $(e2e-out-64k-page)
 
 .PHONY: checkrules
 checkrules: $(PROMTOOL)
@@ -141,4 +143,4 @@ promtool: $(PROMTOOL)
 
 $(PROMTOOL):
 	mkdir -p $(FIRST_GOPATH)/bin
-	curl -fsS -L $(PROMTOOL_URL) | tar -xvzf - -C $(FIRST_GOPATH)/bin --no-anchored --strip 1 promtool
+	curl -fsS -L $(PROMTOOL_URL) | tar -xvzf - -C $(FIRST_GOPATH)/bin --strip 1 "prometheus-$(PROMTOOL_VERSION).$(GO_BUILD_PLATFORM)/promtool"

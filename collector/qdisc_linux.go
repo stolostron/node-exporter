@@ -11,34 +11,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !noqdisc
 // +build !noqdisc
 
 package collector
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/ema/qdisc"
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	"github.com/prometheus/client_golang/prometheus"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type qdiscStatCollector struct {
-	bytes      typedDesc
-	packets    typedDesc
-	drops      typedDesc
-	requeues   typedDesc
-	overlimits typedDesc
-	qlength    typedDesc
-	backlog    typedDesc
-	logger     log.Logger
+	logger       log.Logger
+	deviceFilter deviceFilter
+	bytes        typedDesc
+	packets      typedDesc
+	drops        typedDesc
+	requeues     typedDesc
+	overlimits   typedDesc
+	qlength      typedDesc
+	backlog      typedDesc
 }
 
 var (
-	collectorQdisc = kingpin.Flag("collector.qdisc.fixtures", "test fixtures to use for qdisc collector end-to-end testing").Default("").String()
+	collectorQdisc              = kingpin.Flag("collector.qdisc.fixtures", "test fixtures to use for qdisc collector end-to-end testing").Default("").String()
+	collectorQdiskDeviceInclude = kingpin.Flag("collector.qdisk.device-include", "Regexp of qdisk devices to include (mutually exclusive to device-exclude).").String()
+	collectorQdiskDeviceExclude = kingpin.Flag("collector.qdisk.device-exclude", "Regexp of qdisk devices to exclude (mutually exclusive to device-include).").String()
 )
 
 func init() {
@@ -47,6 +52,10 @@ func init() {
 
 // NewQdiscStatCollector returns a new Collector exposing queuing discipline statistics.
 func NewQdiscStatCollector(logger log.Logger) (Collector, error) {
+	if *collectorQdiskDeviceExclude != "" && *collectorQdiskDeviceInclude != "" {
+		return nil, fmt.Errorf("collector.qdisk.device-include and collector.qdisk.device-exclude are mutaly exclusive")
+	}
+
 	return &qdiscStatCollector{
 		bytes: typedDesc{prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "qdisc", "bytes_total"),
@@ -83,14 +92,15 @@ func NewQdiscStatCollector(logger log.Logger) (Collector, error) {
 			"Number of bytes currently in queue to be sent.",
 			[]string{"device", "kind"}, nil,
 		), prometheus.GaugeValue},
-		logger: logger,
+		logger:       logger,
+		deviceFilter: newDeviceFilter(*collectorQdiskDeviceExclude, *collectorQdiskDeviceExclude),
 	}, nil
 }
 
 func testQdiscGet(fixtures string) ([]qdisc.QdiscInfo, error) {
 	var res []qdisc.QdiscInfo
 
-	b, err := ioutil.ReadFile(filepath.Join(fixtures, "results.json"))
+	b, err := os.ReadFile(filepath.Join(fixtures, "results.json"))
 	if err != nil {
 		return res, err
 	}
@@ -118,6 +128,10 @@ func (c *qdiscStatCollector) Update(ch chan<- prometheus.Metric) error {
 	for _, msg := range msgs {
 		// Only report root qdisc information.
 		if msg.Parent != 0 {
+			continue
+		}
+
+		if c.deviceFilter.ignored(msg.IfaceName) {
 			continue
 		}
 
