@@ -1,6 +1,6 @@
 module github.com/prometheus/node_exporter
 
-go 1.19
+go 1.18
 
 require (
 	github.com/beevik/ntp v0.3.0
