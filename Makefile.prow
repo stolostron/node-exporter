@@ -1,0 +1,5 @@
+include Makefile
+
+# Makefile overrides for prow builds
+PROMU_CONF ?= .promu-cgo.yml
+PROMU := $(FIRST_GOPATH)/bin/promu --config $(PROMU_CONF)
