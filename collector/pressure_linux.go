@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !nopressure
 // +build !nopressure
 
 package collector
@@ -21,8 +22,8 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/procfs"
 )
@@ -100,6 +101,14 @@ func (c *pressureStatsCollector) Update(ch chan<- prometheus.Metric) error {
 				return ErrNoData
 			}
 			return fmt.Errorf("failed to retrieve pressure stats: %w", err)
+		}
+		if vals.Some == nil {
+			level.Debug(c.logger).Log("msg", "pressure information returned no 'some' data")
+			return ErrNoData
+		}
+		if vals.Full == nil {
+			level.Debug(c.logger).Log("msg", "pressure information returned no 'full' data")
+			return ErrNoData
 		}
 		switch res {
 		case "cpu":
