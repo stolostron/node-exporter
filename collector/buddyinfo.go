@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// +build !nobuddyinfo
-// +build !netbsd
+//go:build !nobuddyinfo && !netbsd
+// +build !nobuddyinfo,!netbsd
 
 package collector
 
@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/procfs"
 )

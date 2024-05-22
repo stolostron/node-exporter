@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !nonetworkroute
 // +build !nonetworkroute
 
 package collector
@@ -21,7 +22,7 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	"github.com/jsimonetti/rtnetlink"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -36,7 +37,7 @@ func init() {
 	registerCollector("network_route", defaultDisabled, NewNetworkRouteCollector)
 }
 
-// NewSystemdCollector returns a new Collector exposing systemd statistics.
+// NewNetworkRouteCollector returns a new Collector exposing systemd statistics.
 func NewNetworkRouteCollector(logger log.Logger) (Collector, error) {
 	const subsystem = "network"
 
