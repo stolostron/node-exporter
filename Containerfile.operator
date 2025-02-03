@@ -17,3 +17,13 @@ COPY --from=builder /go/src/github.com/stolostron/node_exporter/node_exporter /b
 EXPOSE      9100
 USER        nobody
 ENTRYPOINT  [ "/bin/node_exporter" ]
+
+LABEL com.redhat.component="node-exporter" \
+  name="node-exporter" \
+  summary="node-exporter" \
+  io.openshift.expose-services="" \
+  io.openshift.tags="data,images" \
+  io.k8s.display-name="node-exporter" \
+  maintainer="" \
+  description="node-exporter" \
+  io.k8s.description="node-exporter"
