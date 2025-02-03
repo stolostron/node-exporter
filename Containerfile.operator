@@ -13,8 +13,6 @@ RUN go mod vendor && make common-build
 FROM registry.access.redhat.com/ubi9/ubi-minimal:latest 
 
 COPY --from=builder /go/src/github.com/stolostron/node_exporter/node_exporter /bin/node_exporter
- 
-RUN microdnf update -y && microdnf install -y virt-what && microdnf clean all && rm -rf /var/cache/*
 
 EXPOSE      9100
 USER        nobody
