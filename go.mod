@@ -6,7 +6,7 @@ require (
 	github.com/ema/qdisc v0.0.0-20200603082823-62d0308e3e00
 	github.com/go-kit/log v0.1.0
 	github.com/godbus/dbus v0.0.0-20190402143921-271e53dc4968
-	github.com/hodgesds/perf-utils v0.2.5
+	github.com/hodgesds/perf-utils v0.7.0
 	github.com/illumos/go-kstat v0.0.0-20210513183136-173c9b0a9973
 	github.com/jsimonetti/rtnetlink v0.0.0-20210713125558-2bfdf1dbdbd6
 	github.com/lufia/iostat v1.1.0
