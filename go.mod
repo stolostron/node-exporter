@@ -1,7 +1,7 @@
 module github.com/prometheus/node_exporter
 
 require (
-	github.com/beevik/ntp v0.3.0
+	github.com/beevik/ntp v0.3.3
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/ema/qdisc v0.0.0-20200603082823-62d0308e3e00
 	github.com/go-kit/log v0.1.0
