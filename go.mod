@@ -19,7 +19,7 @@ require (
 	github.com/prometheus/procfs v0.7.1
 	github.com/safchain/ethtool v0.0.0-20201023143004-874930cb3ce0
 	github.com/siebenmann/go-kstat v0.0.0-20210513183136-173c9b0a9973 // indirect
-	github.com/soundcloud/go-runit v0.0.0-20150630195641-06ad41a06c4a
+	github.com/soundcloud/go-runit bc975d80c917
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
