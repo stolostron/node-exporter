@@ -6,9 +6,10 @@ metadata:
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
-    pipelinesascode.tekton.dev/max-keep-runs: '3'
+    pipelinesascode.tekton.dev/cancel-in-progress: "true"
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch == "release-2.14"
-  creationTimestamp:
+  creationTimestamp: null
   labels:
     appstudio.openshift.io/application: release-acm-214
     appstudio.openshift.io/component: node-exporter-acm-214
@@ -33,7 +34,7 @@ spec:
   - name: path-context
     value: .
   - name: hermetic
-    value: 'true'
+    value: true
   - name: prefetch-input
     value: '[{"path": ".", "type": "gomod"}, {"path": "promu/", "type": "gomod"}]'
   - name: build-source-image
