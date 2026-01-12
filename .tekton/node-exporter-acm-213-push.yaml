@@ -5,9 +5,10 @@ metadata:
     build.appstudio.openshift.io/repo: https://github.com/stolostron/node-exporter?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+    pipelinesascode.tekton.dev/cancel-in-progress: "true"
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch == "release-2.13"
-  creationTimestamp:
+  creationTimestamp: null
   labels:
     appstudio.openshift.io/application: release-acm-213
     appstudio.openshift.io/component: node-exporter-acm-213
@@ -33,7 +34,7 @@ spec:
   - name: path-context
     value: .
   - name: hermetic
-    value: "true"
+    value: true
   - name: prefetch-input
     value: '[{"path": ".", "type": "gomod"}, {"path": "promu/", "type": "gomod"}]'
   - name: build-source-image
