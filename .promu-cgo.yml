@@ -6,6 +6,7 @@ go:
 repository:
     path: github.com/prometheus/node_exporter
 build:
+    static: false
     binaries:
         - name: node_exporter
     ldflags: |
