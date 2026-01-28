@@ -20,7 +20,8 @@ USER        nobody
 ENTRYPOINT  [ "/bin/node_exporter" ]
 
 LABEL com.redhat.component="node-exporter" \
-  name="node-exporter" \
+  name="rhacm2/node-exporter-rhel9" \
+  cpe="cpe:/a:redhat:acm:2.16::el9" \
   summary="node-exporter" \
   io.openshift.expose-services="" \
   io.openshift.tags="data,images" \
