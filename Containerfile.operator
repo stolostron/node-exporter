@@ -16,7 +16,7 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
 COPY --from=builder /go/src/github.com/stolostron/node_exporter/node_exporter /bin/node_exporter
 
 EXPOSE      9100
-USER        nobody
+USER        1001
 ENTRYPOINT  [ "/bin/node_exporter" ]
 
 LABEL com.redhat.component="node-exporter" \
