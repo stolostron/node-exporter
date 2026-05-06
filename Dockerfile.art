@@ -1,0 +1,31 @@
+# Copyright Contributors to the Open Cluster Management project
+# Licensed under the Apache License 2.0
+
+FROM registry-proxy.engineering.redhat.com/rh-osbs/openshift-golang-builder:v1.25.8 AS builder
+
+WORKDIR /go/src/github.com/stolostron/node_exporter
+COPY . .
+
+RUN cd promu && go build -mod=mod -o /cachi2/output/deps/gomod/bin/promu
+
+# adding the cgo flag here to not break the architecture CI builds
+RUN go mod vendor && CGO_ENABLED=1 GOEXPERIMENT=strictfipsruntime /cachi2/output/deps/gomod/bin/promu -c .promu-cgo.yml build -v --cgo --prefix /go/src/github.com/stolostron/node_exporter
+
+FROM registry-proxy.engineering.redhat.com/ubi9/ubi-minimal:latest 
+
+COPY --from=builder /go/src/github.com/stolostron/node_exporter/node_exporter /bin/node_exporter
+
+EXPOSE      9100
+USER        nobody
+ENTRYPOINT  [ "/bin/node_exporter" ]
+
+LABEL com.redhat.component="node-exporter" \
+  name="rhacm2/node-exporter-rhel9" \
+  cpe="cpe:/a:redhat:acm:2.16::el9" \
+  summary="node-exporter" \
+  io.openshift.expose-services="" \
+  io.openshift.tags="data,images" \
+  io.k8s.display-name="node-exporter" \
+  maintainer="" \
+  description="node-exporter" \
+  io.k8s.description="node-exporter"
