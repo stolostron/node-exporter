@@ -6,9 +6,10 @@ FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:rhel_9_1.25 AS bui
 WORKDIR /go/src/github.com/stolostron/node_exporter
 COPY . .
 
-RUN cd promu && go build -mod=mod -o /cachi2/output/deps/gomod/bin/promu
+RUN cd promu && CGO_ENABLED=1 GOEXPERIMENT=strictfipsruntime go build -mod=mod -o /cachi2/output/deps/gomod/bin/promu
 
-RUN go mod vendor && /cachi2/output/deps/gomod/bin/promu -c .promu-cgo.yml build -v --cgo --prefix /go/src/github.com/stolostron/node_exporter
+# adding the cgo flag here to not break the architecture CI builds
+RUN go mod vendor && CGO_ENABLED=1 GOEXPERIMENT=strictfipsruntime /cachi2/output/deps/gomod/bin/promu -c .promu-cgo.yml build -v --cgo --prefix /go/src/github.com/stolostron/node_exporter
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal:latest 
 
