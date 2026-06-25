@@ -2,6 +2,9 @@
 extends: default
 ignore: |
   **/node_modules
+  .circleci/
+  .tekton/
+  .promu.prow.yml
 
 rules:
   braces:
