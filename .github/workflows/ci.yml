@@ -1,0 +1,43 @@
+---
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+      - "release-*"
+
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: "1.25.x"
+
+jobs:
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Install tools
+        run: |
+          go install github.com/google/go-jsonnet/cmd/jsonnet@latest
+          go install github.com/google/go-jsonnet/cmd/jsonnetfmt@latest
+          go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@latest
+      - name: Run tests
+        run: |
+          make
+          mkdir -p .build/linux-amd64
+          cp node_exporter .build/linux-amd64/node_exporter
+          make docker
+          make test-docker
+          make -C docs/node-mixin clean
+          make -C docs/node-mixin jb_install
+          make -C docs/node-mixin
+          git diff --exit-code
