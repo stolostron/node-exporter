@@ -35,7 +35,7 @@ jobs:
           make
           mkdir -p .build/linux-amd64
           cp node_exporter .build/linux-amd64/node_exporter
-          make docker
+          make docker DOCKER_ARCHS=amd64
           make test-docker
           make -C docs/node-mixin clean
           make -C docs/node-mixin jb_install
