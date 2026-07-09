@@ -1,7 +1,11 @@
 ---
 extends: default
 ignore: |
-  **/node_modules
+  ui/react-app/node_modules
+  .circleci/
+  .tekton/
+  .promu.prow.yml
+  .github/workflows/bsd.yml
 
 rules:
   braces:
