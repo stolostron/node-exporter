@@ -1,9 +1,44 @@
 ## master / unreleased
 
-* [CHANGE]
-* [FEATURE]
-* [ENHANCEMENT]
-* [BUGFIX]
+## 1.12.1 / 2026-07-14
+
+* [BUGFIX] perf: Fix perf profiler flag handling #3731
+* [BUGFIX] edac: Fix optional csrow ue_count collection #3734
+
+## 1.12.0 / 2026-07-10
+
+* [FEATURE] mountstats: Add NFS mountpoint info metric #3554
+* [FEATURE] nvmesubsystem: Add new collector #3579
+* [FEATURE] dmmultipath: Add new collector #3581
+* [FEATURE] infiniband: Add device filtering option #3694
+* [ENHANCEMENT] hwmon: disambiguate colliding chip labels #3646
+* [ENHANCEMENT] cpufreq: Add support for cpuinfo_avg_freq #3712
+* [ENHANCEMENT] filesystem: Support ext4 super block emergency_ro flag #3717
+* [ENHANCEMENT] edac: Add per-channel error metrics with DIMM labels #3720
+* [BUGFIX] diskstats: Only enforce mutual exclusivity for non-empty values #3617
+* [BUGFIX] thermal_zone: Handle EINVAL errors gracefully #3657
+* [BUGFIX] filesystem: Add comma separator in mount options #3659
+* [BUGFIX] diskstats: Fix rotational queue stats scrape regression #3686
+* [BUGFIX] filesystem: Prevent panic on mount points with non-UTF-8 names #3687
+
+## 1.11.1 / 2026-04-07
+
+* [BUGFIX] Fix kernel_hung for no data #3613
+
+## 1.11.0 / 2026-04-04
+
+* [CHANGE] Adds distroless container image. #3592
+* [FEATURE] infiniband: Add `hw_counters` metrics #2827
+* [FEATURE] kernel_hung: Add collector for kernel hung tasks #3470
+* [FEATURE] mixin: Add "All" option to cluster variable in dashboards #3509
+* [FEATURE] netlink: Add node_network_altnames_info metric #3541
+* [FEATURE] thermal: Add support for CPU temperature metrics on Apple Silicon #3547
+* [FEATURE] bcachefs: Add new collector for bcachefs #3523
+* [ENHANCEMENT] mixin: Make devices in network graphs configurable #3525
+* [ENHANCEMENT] nvme: Add namespace parameters #3360
+* [BUGFIX] netdev: Respect deviceFilter for `node_network_address_info` metric #3340
+* [BUGFIX] mountstats: Fix multiple transports statistics labeling #3358
+* [BUGFIX] diskstats: Fix panic when using device-include flag only #3603
 
 ## 1.10.2 / 2025-10-25
 

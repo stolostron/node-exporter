@@ -2,9 +2,7 @@
 extends: default
 ignore: |
   **/node_modules
-  .circleci/
-  .tekton/
-  .promu.prow.yml
+  web/api/v1/testdata/openapi_*_golden.yaml
 
 rules:
   braces:

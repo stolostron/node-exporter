@@ -12,7 +12,6 @@
 // limitations under the License.
 
 //go:build !nocpu
-// +build !nocpu
 
 package collector
 
@@ -62,6 +61,14 @@ func (c *cpuFreqCollector) Update(ch chan<- prometheus.Metric) error {
 				cpuFreqHertzDesc,
 				prometheus.GaugeValue,
 				float64(*stats.CpuinfoCurrentFrequency)*1000.0,
+				stats.Name,
+			)
+		}
+		if stats.CpuinfoAverageFrequency != nil {
+			ch <- prometheus.MustNewConstMetric(
+				cpuFreqAvgDesc,
+				prometheus.GaugeValue,
+				float64(*stats.CpuinfoAverageFrequency)*1000.0,
 				stats.Name,
 			)
 		}
