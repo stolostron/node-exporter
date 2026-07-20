@@ -1,5 +1,5 @@
 go:
-    # Copied from .promu-cgo.yml. 
+    # Copied from .promu-cgo.yml.
     #   add build.static: false
     #   only build linux/amd64 plaform
     version: 1.23
