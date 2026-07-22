@@ -4,7 +4,8 @@ WORKDIR /go/src/github.com/stolostron/node_exporter
 COPY . .
 RUN make -f Makefile.prow build
 
-FROM registry.access.redhat.com/ubi9/ubi-minimal:latest 
+FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
+LABEL io.prometheus.image.variant="ocp"
 
 COPY --from=builder /go/src/github.com/stolostron/node_exporter/node_exporter /bin/node_exporter
  
