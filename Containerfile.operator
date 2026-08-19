@@ -11,7 +11,7 @@ RUN cd promu && go build -mod=mod -o /cachi2/output/deps/gomod/bin/promu
 # adding the cgo flag here to not break the architecture CI builds
 RUN go mod vendor && /cachi2/output/deps/gomod/bin/promu -c .promu-cgo.yml build -v --cgo --prefix /go/src/github.com/stolostron/node_exporter
 
-FROM registry.access.redhat.com/ubi9/ubi-minimal:latest 
+FROM registry.redhat.io/ubi9/ubi-minimal-pqc:latest 
 
 COPY --from=builder /go/src/github.com/stolostron/node_exporter/node_exporter /bin/node_exporter
 
