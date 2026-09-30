@@ -219,7 +219,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
       - name: test-e2e
-        uses: vmactions/solaris-vm@58cbd70c6e051860f9b8f65908cc582938fbbdba  # v1.1.5
+        uses: vmactions/solaris-vm@87d3c436511cef802cd1637f86f73b1a97715c8c  # v1.4.1
         with:
           copyback: false
           envs: 'GO_VERSION_SOLARIS'
